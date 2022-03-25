@@ -1,4 +1,32 @@
 import 'package:flutter/material.dart';
+
+import 'package:smart_events_app_flutter/screens/sign_in_screen.dart';
+
+import 'package:get/get.dart';
+import 'package:smart_events_app_flutter/utils/app_constants.dart';
+import 'controller/requirement_state_controller.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    Get.put(RequirementStateController());
+    return MaterialApp(
+      title: 'FlutterFire Samples',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        brightness: Brightness.light,
+      ),
+      home: SignInScreen(),
+    );
+  }
+}
+
+/*import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
@@ -6,7 +34,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:smart_events_app_flutter/controller/requirement_state_controller.dart';
 import 'package:get/get.dart';
-import 'package:smart_events_app_flutter/view/attractionlist.dart';
+import 'package:smart_events_app_flutter/tabs/attractionlist.dart';
 import 'package:smart_events_app_flutter/utils/mathutil.dart';
 
 
@@ -448,4 +476,4 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       );
     }
   }
-}
+}*/
