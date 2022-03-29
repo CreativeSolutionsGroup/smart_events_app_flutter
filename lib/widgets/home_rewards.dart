@@ -9,23 +9,22 @@ import '../utils/authentication.dart';
 import '../utils/user_account.dart';
 
 class RewardsBasicView extends StatefulWidget {
-  const RewardsBasicView({Key? key, required User user})
-      : _user = user,
+  const RewardsBasicView({Key? key, required User user, required UserAccount userAccount})
+      : _user = user, _userAccount = userAccount,
         super(key: key);
 
   final User _user;
+  final UserAccount _userAccount;
 
   @override
   _RewardsBasicViewState createState() => _RewardsBasicViewState();
 }
 
 class DataRequiredForBuild {
-  UserAccount userAccount;
   List<RewardTier> rewardTiers;
   RewardTier currentTier;
 
   DataRequiredForBuild({
-    required this.userAccount,
     required this.rewardTiers,
     required this.currentTier
   });
@@ -33,26 +32,21 @@ class DataRequiredForBuild {
 
 class _RewardsBasicViewState extends State<RewardsBasicView> {
   late User _user;
+  late UserAccount _userAccount;
   late Future<DataRequiredForBuild> _data;
 
   @override
   void initState() {
     _user = widget._user;
-    _data = _fetchDataForBuild(_user);
+    _userAccount = widget._userAccount;
+    _data = _fetchDataForBuild(_user, _userAccount);
     super.initState();
   }
 
-  Future<DataRequiredForBuild> _fetchDataForBuild(User user) async {
-    print("Test");
-    String userID = await UserAccount.getUserID(user);
-    print(userID);
-    UserAccount userAccount = await UserAccount.fetchUserAccount(user, userID);
+  Future<DataRequiredForBuild> _fetchDataForBuild(User user, UserAccount userAccount) async {
     List<RewardTier> tiers = await Rewards.getSortedRewardTiers();
-    print(tiers);
     RewardTier currentTier = Rewards.getUserRewardTier(tiers, userAccount.reward_points)!;
-    print(currentTier.min_points);
     return DataRequiredForBuild(
-        userAccount: userAccount,
         rewardTiers: tiers,
         currentTier: currentTier
     );
@@ -64,7 +58,7 @@ class _RewardsBasicViewState extends State<RewardsBasicView> {
         future: _data,
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
-            UserAccount? account = snapshot.data!.userAccount;
+            UserAccount? account = _userAccount;
             List<RewardTier> tiers = snapshot.data!.rewardTiers;
             RewardTier? currentTier = snapshot.data!.currentTier;
             RewardTier? nextTier = Rewards.getNextTier(currentTier, tiers);
@@ -81,35 +75,14 @@ class _RewardsBasicViewState extends State<RewardsBasicView> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: _user.photoURL != null
-                              ? ClipOval(
-                            child: Material(
-                              color: AppConstants.COLOR_CEDARVILLE_BLUE.withOpacity(0.3),
-                              child: Image.network(
-                                _user.photoURL!,
-                                height: 50,
-                              ),
-                            ),
-                          )
-                              : ClipOval(
-                            child: Material(
-                              color: Colors.grey,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Icon(
-                                  Icons.person,
-                                  size: 50,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child:  Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Rewards", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white))
+                          ]
+                      ),
                     ),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.center,

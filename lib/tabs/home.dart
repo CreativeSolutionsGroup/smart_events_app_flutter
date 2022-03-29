@@ -10,11 +10,12 @@ import '../widgets/google_sign_in_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeTab extends StatefulWidget {
-  const HomeTab({Key? key, required User user})
-      : _user = user,
+  const HomeTab({Key? key, required User user, required UserAccount userAccount})
+      : _user = user, _userAccount = userAccount,
         super(key: key);
 
   final User _user;
+  final UserAccount _userAccount;
 
   @override
   _HomeTabState createState() => _HomeTabState();
@@ -22,6 +23,7 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   late User _user;
+  late UserAccount _userAccount;
   bool _isSigningOut = false;
 
   Route _routeToSignInScreen() {
@@ -46,6 +48,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   void initState() {
     _user = widget._user;
+    _userAccount = widget._userAccount;
 
     super.initState();
   }
@@ -64,39 +67,63 @@ class _HomeTabState extends State<HomeTab> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Row(),
-              SizedBox(height: 16.0),
-              _user.photoURL != null
-                  ? ClipOval(
-                child: Material(
-                  color: AppConstants.COLOR_CEDARVILLE_BLUE.withOpacity(0.3),
-                  child: Image.network(
-                    _user.photoURL!,
-                    fit: BoxFit.fitHeight,
+              Padding(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _user.photoURL != null
+                          ? ClipOval(
+                        child: Material(
+                          color: AppConstants.COLOR_CEDARVILLE_BLUE.withOpacity(0.3),
+                          child: Image.network(
+                            _user.photoURL!,
+                            height: 40,
+                          ),
+                        ),
+                      )
+                          : ClipOval(
+                        child: Material(
+                          color: Colors.grey,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Icon(
+                              Icons.person,
+                              size: 50,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              IconButton(
+                                tooltip: 'Notifications',
+                                icon: Icon(Icons.notifications_none),
+                                color: AppConstants.COLOR_CEDARVILLE_BLUE,
+                                onPressed: () {
+                                  //_displayScanningDialog(context);
+                                },
+                              ),
+                              IconButton(
+                                tooltip: 'Check In',
+                                icon: Icon(Icons.where_to_vote),
+                                color: AppConstants.COLOR_CEDARVILLE_YELLOW,
+                                onPressed: () {
+                                  //_displayScanningDialog(context);
+                                },
+                              )
+                            ]
+                          )
+                        ]
+                      )
+                    ],
                   ),
-                ),
-              )
-                  : ClipOval(
-                child: Material(
-                  color: Colors.grey,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
               ),
-              SizedBox(height: 16.0),
-              Text(
-                _user.displayName!,
-                style: TextStyle(
-                  fontSize: 26,
-                ),
-              ),
-              RewardsBasicView(user: _user),
+              //Reward Summary
+              RewardsBasicView(user: _user, userAccount: _userAccount),
               _isSigningOut
                   ? CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(AppConstants.COLOR_CEDARVILLE_YELLOW),

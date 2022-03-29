@@ -63,6 +63,18 @@ class Rewards {
     }
   }
 
+  static Future <Reward> fetchReward(String rewardId) async {
+    final response =
+    await http.get(Uri.parse(AppConstants.API_URL + '/reward/' + rewardId));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      print(data['data']);
+      return Reward.fromJson(data['data']);
+    } else {
+      throw Exception('[Reward] Unexpected error occured!');
+    }
+  }
+
 }
 
 class RewardTier {
@@ -111,6 +123,29 @@ class UserReward {
         reward_id: json['reward_id'],
         remaining_uses: json['remaining_uses'],
         date_earned: json['date_earned']
+    );
+  }
+}
+
+class Reward {
+  final String id;
+  final String name;
+  final String description;
+  final String? image_url;
+
+  Reward({
+    required this.id,
+    required this.name,
+    required this.description,
+    this.image_url
+  });
+
+  factory Reward.fromJson(Map<String, dynamic> json) {
+    return Reward(
+        id: json['_id'],
+        name: json['name'],
+        description: json['description'],
+        image_url: json['image_url']
     );
   }
 }

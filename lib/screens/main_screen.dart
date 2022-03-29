@@ -10,7 +10,9 @@ import 'package:smart_events_app_flutter/controller/requirement_state_controller
 import 'package:get/get.dart';
 import 'package:smart_events_app_flutter/screens/sign_in_screen.dart';
 import 'package:smart_events_app_flutter/tabs/attractionlist.dart';
+import 'package:smart_events_app_flutter/tabs/user_rewards.dart';
 import 'package:smart_events_app_flutter/utils/app_constants.dart';
+import 'package:smart_events_app_flutter/utils/user_account.dart';
 import 'package:smart_events_app_flutter/widgets/beacon_scanner.dart';
 
 import '../tabs/home.dart';
@@ -37,6 +39,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late User _user;
+  late Future<UserAccount> _userAccount;
   bool _isSigningOut = false;
 
   int _selectedIndex = 0; //Selected Tab
@@ -63,7 +66,14 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     _user = widget._user;
+    _userAccount = _fetchUserAccount(_user);
     super.initState();
+  }
+
+  Future<UserAccount> _fetchUserAccount(User user) async {
+    String userID = await UserAccount.getUserID(user);
+    UserAccount userAccount = await UserAccount.fetchUserAccount(user, userID);
+    return userAccount;
   }
 
   static List<Widget> _pages = <Widget>[
@@ -95,61 +105,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Smart Events'),
-        centerTitle: false,
-        backgroundColor: AppConstants.COLOR_CEDARVILLE_BLUE,
-        actions: <Widget>[
-          IconButton(
-            tooltip: 'Check In',
-            icon: Icon(Icons.where_to_vote),
-            color: AppConstants.COLOR_CEDARVILLE_YELLOW,
-            onPressed: () {
-              _displayScanningDialog(context);
-            },
-          )
-        ],
-      ),
-      /*body: _beacons.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : ListView(
-        children: ListTile.divideTiles(
-          context: context,
-          tiles: _beacons.map(
-                (beacon) {
-              return ListTile(
-                title: Text(
-                  beacon.proximityUUID,
-                  style: TextStyle(fontSize: 15.0),
-                ),
-                subtitle: new Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Flexible(
-                      child: Text(
-                        'Major: ${beacon.major}\nMinor: ${beacon.minor}',
-                        style: TextStyle(fontSize: 13.0),
-                      ),
-                      flex: 1,
-                      fit: FlexFit.tight,
-                    ),
-                    Flexible(
-                      child: Text(
-                        'Accuracy: ${beacon.accuracy}m\nRSSI: ${beacon.rssi}',
-                        style: TextStyle(fontSize: 13.0),
-                      ),
-                      flex: 2,
-                      fit: FlexFit.tight,
-                    )
-                  ],
-                ),
-              );
-            },
-          ),
-        ).toList(),
-      ),*/
       body: Center(
-        child: _selectedIndex == 0 ? HomeTab(user: _user) : _pages.elementAt(_selectedIndex),
+        child: buildTabPage(context)
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -193,6 +150,31 @@ class _MainScreenState extends State<MainScreen> {
       builder: (BuildContext context) {
         return BeaconScanner();
       },
+    );
+  }
+
+  Widget buildTabPage(BuildContext context){
+    return FutureBuilder <UserAccount>(
+        future: _userAccount,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            UserAccount userAccount = snapshot.data!;
+            if(_selectedIndex == 0){
+              return HomeTab(user: _user, userAccount: userAccount);
+            }
+            else if(_selectedIndex == 4){
+              return RewardsTab(user: _user, userAccount: userAccount);
+            }
+            else {
+              return _pages.elementAt(_selectedIndex);
+            }
+          }
+          else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          // By default show a loading spinner.
+          return CircularProgressIndicator();
+        }
     );
   }
 }
