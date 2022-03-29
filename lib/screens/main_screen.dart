@@ -14,6 +14,7 @@ import 'package:smart_events_app_flutter/utils/app_constants.dart';
 import 'package:smart_events_app_flutter/widgets/beacon_scanner.dart';
 
 import '../tabs/home.dart';
+import '../widgets/beacon_scanner_test.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key, required User user})
@@ -191,7 +192,7 @@ class _MainScreenState extends State<MainScreen> {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return BeaconScanner();
+        return BeaconScannerTest();
       },
     );
   }
