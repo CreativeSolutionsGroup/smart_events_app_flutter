@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_events_app_flutter/utils/app_constants.dart';
 import 'package:smart_events_app_flutter/utils/user_account.dart';
+import 'package:smart_events_app_flutter/widgets/beacon_scanner.dart';
 import 'package:smart_events_app_flutter/widgets/home_rewards.dart';
 
 import '../screens/sign_in_screen.dart';
@@ -112,7 +113,7 @@ class _HomeTabState extends State<HomeTab> {
                                 icon: Icon(Icons.where_to_vote),
                                 color: AppConstants.COLOR_CEDARVILLE_YELLOW,
                                 onPressed: () {
-                                  //_displayScanningDialog(context);
+                                  _displayScanningDialog(context);
                                 },
                               )
                             ]
@@ -167,6 +168,17 @@ class _HomeTabState extends State<HomeTab> {
           ),
         ),
       ),
+    );
+  }
+
+
+
+  _displayScanningDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BeaconScanner();
+      },
     );
   }
 }

@@ -144,15 +144,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  _displayScanningDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return BeaconScanner();
-      },
-    );
-  }
-
   Widget buildTabPage(BuildContext context){
     return FutureBuilder <UserAccount>(
         future: _userAccount,
