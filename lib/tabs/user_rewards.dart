@@ -4,7 +4,6 @@ import 'package:smart_events_app_flutter/utils/rewards.dart';
 import 'package:smart_events_app_flutter/utils/user_account.dart';
 import 'package:smart_events_app_flutter/widgets/home_rewards.dart';
 
-import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import "dart:core";
 
@@ -47,12 +46,10 @@ class _RewardsTabState extends State<RewardsTab> {
   Future<DataRequiredForBuild> _fetchDataForBuild(UserAccount userAccount) async {
     List<UserReward> userRewards = await Rewards.fetchUserRewards(_userAccount.id);
     Map<String, Reward> rewards = <String, Reward>{};
-    print(userRewards.length);
     for(UserReward userReward in userRewards){
         Reward reward = await Rewards.fetchReward(userReward.reward_id);
         rewards.putIfAbsent(userReward.reward_id, () => reward);
     }
-    print(rewards.keys.length);
     return DataRequiredForBuild(
         userRewards: userRewards,
         rewards: rewards
@@ -81,7 +78,7 @@ class _RewardsTabState extends State<RewardsTab> {
                   ),
                   child: RewardsBasicView(user: _user, userAccount: _userAccount)
               ),
-              Text("Your Rewards", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: AppConstants.COLOR_CEDARVILLE_BLUE)),
+              const Text("Your Rewards", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: AppConstants.COLOR_CEDARVILLE_BLUE)),
               //List of User Rewards
               const Divider(
                 height: 20,
@@ -112,24 +109,21 @@ class _RewardsTabState extends State<RewardsTab> {
             Map<String, Reward> rewards = snapshot.data!.rewards;
 
             if(userRewards.isEmpty){
-              return Center(
-                  child: Text("Empty", style: const TextStyle(fontSize: 18))
+              return const Center(
+                  child: Text("Empty", style: TextStyle(fontSize: 18))
               );
             }
             return
-              ListView.builder(
-                  itemCount: rewards.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    UserReward userReward = userRewards[index];
-                    Reward? reward = rewards[userReward.reward_id];
-                    return Card(
-                        color: userReward.remaining_uses <= 0 ? Colors.black.withOpacity(0.5) : Colors.grey[100],
-                        child:
-                          InkWell(
-                            onTap: () {
-                              //_displayDialog(context, attraction);
-                            },
-                            child: Container(
+              RefreshIndicator(
+                  child: ListView.builder(
+                    itemCount: rewards.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      UserReward userReward = userRewards[index];
+                      Reward? reward = rewards[userReward.reward_id];
+                      return Card(
+                          color: userReward.remaining_uses <= 0 ? Colors.black.withOpacity(0.5) : Colors.grey[100],
+                          child:
+                            InkWell(
                               child: Column(
                                 children: [
                                   Container(
@@ -144,8 +138,16 @@ class _RewardsTabState extends State<RewardsTab> {
                                                         reward.image_url!,
                                                         height: 100,
                                                         width: 100,
+                                                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                                          if (loadingProgress == null) {
+                                                            return child;
+                                                          }
+                                                          return const Center(
+                                                            child: CircularProgressIndicator(),
+                                                          );
+                                                        }
                                                     )
-                                                : Text("Error"),
+                                                : const Text("Error"),
                                           ),
                                           //Name and Description
                                           Column(
@@ -174,17 +176,28 @@ class _RewardsTabState extends State<RewardsTab> {
                                   )
                                 ],
                               ),
-                            )
-                        )
-                    );
-                  }
+                              onTap: () {
+                                //_displayDialog(context, attraction);
+                              }
+                          )
+                      );
+                    }
+                ),
+                onRefresh: () {
+                  return Future.delayed(
+                    const Duration(seconds: 1),
+                    () async {
+                      _data = _fetchDataForBuild(_userAccount);
+                    },
+                  );
+                },
               );
           }
           else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
           // By default show a loading spinner.
-          return Center(
+          return const Center(
               child: CircularProgressIndicator()
           );
         }

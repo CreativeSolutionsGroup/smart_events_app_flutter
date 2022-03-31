@@ -165,9 +165,11 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
   pauseScanBeacon() async {
     _streamRanging?.pause();
     if (_beacons.isNotEmpty) {
-      setState(() {
-        _beacons.clear();
-      });
+      /*if(mounted) {
+        setState(() {
+          _beacons.clear();
+        });
+      }*/
     }
   }
 

@@ -33,9 +33,11 @@ class Rewards {
   }
 
   static RewardTier? getNextTier(RewardTier tier, List<RewardTier> tiers){
-    int index = tiers.reversed.toList().indexOf(tier);
+    List<RewardTier> reverse = tiers.reversed.toList();
+    int index = reverse.indexOf(tier);
+    print(index);
     if(index > -1 && index < tiers.length - 1){
-      return tiers.elementAt(index + 1);
+      return reverse.elementAt(index + 1);
     }
     return null;
   }
@@ -68,7 +70,6 @@ class Rewards {
     await http.get(Uri.parse(AppConstants.API_URL + '/reward/' + rewardId));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data['data']);
       return Reward.fromJson(data['data']);
     } else {
       throw Exception('[Reward] Unexpected error occured!');
