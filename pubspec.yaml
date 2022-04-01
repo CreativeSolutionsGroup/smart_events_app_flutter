@@ -33,6 +33,7 @@ dependencies:
   get: ^4.3.6
   http: ^0.13.4
   shared_preferences: ^2.0.13
+  qr_flutter: ^4.0.0
 
   #Firebase Login
   firebase_core: ^1.13.1

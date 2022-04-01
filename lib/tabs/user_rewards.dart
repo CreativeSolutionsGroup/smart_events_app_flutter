@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:smart_events_app_flutter/utils/app_constants.dart';
 import 'package:smart_events_app_flutter/utils/rewards.dart';
@@ -6,6 +8,8 @@ import 'package:smart_events_app_flutter/widgets/home_rewards.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import "dart:core";
+
+import 'package:smart_events_app_flutter/widgets/qr_dialog.dart';
 
 class RewardsTab extends StatefulWidget {
   const RewardsTab({Key? key, required User user, required UserAccount userAccount})
@@ -177,7 +181,8 @@ class _RewardsTabState extends State<RewardsTab> {
                                 ],
                               ),
                               onTap: () {
-                                //_displayDialog(context, attraction);
+                                String data = jsonEncode({"type": "reward", "reward_id": reward.id});
+                                _displayQRDialog(context, data);
                               }
                           )
                       );
@@ -201,6 +206,15 @@ class _RewardsTabState extends State<RewardsTab> {
               child: CircularProgressIndicator()
           );
         }
+    );
+  }
+
+  _displayQRDialog(BuildContext context, String data) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return QRDialog(data: data);
+      },
     );
   }
 }
