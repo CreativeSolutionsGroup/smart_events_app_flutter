@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QRDialog extends StatefulWidget {
-  const QRDialog({Key? key, required String data})
-      : _data = data,
+  const QRDialog({Key? key, required String title, required String data})
+      : _title = title, _data = data,
         super(key: key);
 
+  final String _title;
   final String _data;
 
   @override
@@ -15,10 +16,12 @@ class QRDialog extends StatefulWidget {
 }
 
 class _QRDialogState extends State<QRDialog> {
+  late String _title;
   late String _data;
 
   @override
   void initState() {
+    _title = widget._title;
     _data = widget._data;
 
     super.initState();
@@ -29,14 +32,19 @@ class _QRDialogState extends State<QRDialog> {
     return SimpleDialog(
       children:[
         Center(
-          child: SizedBox(
-              width: 200,
-              height: 200,
-              child: QrImage(
-                data: _data,
-                version: QrVersions.auto,
-                size: 200
+          child: Column(
+            children: [
+              Text(_title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: QrImage(
+                      data: _data,
+                      version: QrVersions.auto,
+                      size: 200
+                  )
               )
+            ],
           )
         )
       ],

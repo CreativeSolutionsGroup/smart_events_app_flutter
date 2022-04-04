@@ -107,8 +107,13 @@ class _RewardsTabState extends State<RewardsTab> {
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             List<UserReward> userRewards = snapshot.data!.userRewards;
+            //Sort the used rewards to the bottom
             userRewards.sort((a, b) => (
                 a.remaining_uses == 0 ? 1 : b.remaining_uses == 0 ? -1 : 0
+            ));
+            //Sort rewards by date earned
+            userRewards.sort((a, b) => (
+                DateTime.parse(a.date_earned).isBefore(DateTime.parse(b.date_earned)) ? 1 : 0
             ));
             Map<String, Reward> rewards = snapshot.data!.rewards;
 
@@ -204,8 +209,14 @@ class _RewardsTabState extends State<RewardsTab> {
                                 ],
                               ),
                               onTap: () {
+
+                                if(userReward.remaining_uses <= 0){
+                                  _displayWarningDialog(context, "This reward has already been used");
+                                  return;
+                                }
+
                                 String data = jsonEncode({"type": "reward", "reward_id": reward.id});
-                                _displayQRDialog(context, data);
+                                _displayQRDialog(context, reward.name, data);
                               }
                           )
                       );
@@ -232,11 +243,22 @@ class _RewardsTabState extends State<RewardsTab> {
     );
   }
 
-  _displayQRDialog(BuildContext context, String data) async {
+  _displayQRDialog(BuildContext context, String title, String data) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return QRDialog(data: data);
+        return QRDialog(title: title, data: data);
+      },
+    );
+  }
+
+  _displayWarningDialog(BuildContext context, String text) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(text),
+        );
       },
     );
   }
