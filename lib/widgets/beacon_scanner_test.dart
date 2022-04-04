@@ -23,7 +23,7 @@ class _BeaconScannerTestState extends State<BeaconScannerTest> {
     super.initState();
 
     listeningState();
-
+    
     controller.startStream.listen((flag) {
       if (flag == true) {
         initScanBeacon();
@@ -40,11 +40,6 @@ class _BeaconScannerTestState extends State<BeaconScannerTest> {
   initScanBeacon() async {
     await flutterBeacon.initializeScanning;
 
-    print(
-        'RETURNED, authorizationStatusOk=${controller.authorizationStatusOk}, '
-            'locationServiceEnabled=${controller.locationServiceEnabled}, '
-            'bluetoothEnabled=${controller.bluetoothEnabled}');
-
     if (!controller.authorizationStatusOk ||
         !controller.locationServiceEnabled ||
         !controller.bluetoothEnabled) {
@@ -59,10 +54,6 @@ class _BeaconScannerTestState extends State<BeaconScannerTest> {
         identifier: 'Alec iPhone Beacon',
         proximityUUID: '715b00d1-6f35-510a-a219-f56661916498',
       ),
-      // Region(
-      //   identifier: 'Alec Pixel 3XL',
-      //   proximityUUID: 'ec266c73-95ce-4dbd-a46b-512a7da721d5',
-      // ),
       Region(
         identifier: 'SmartEvents#1',
         proximityUUID: '56ad5235-0a79-4931-b1dd-5d16c5334c20',
@@ -139,7 +130,7 @@ class _BeaconScannerTestState extends State<BeaconScannerTest> {
       controller.pauseScanning();
     }
   }
-
+  
   pauseScanBeacon() async {
     _streamRanging?.pause();
     if (_beacons.isNotEmpty) {
@@ -166,14 +157,14 @@ class _BeaconScannerTestState extends State<BeaconScannerTest> {
   @override
   void dispose() {
     _streamRanging?.cancel();
-    _streamBluetooth?.cancel();
+   _streamBluetooth?.cancel();
     controller.pauseScanning();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+return Container(
       child: _beacons.isEmpty
           ? Center(child: CircularProgressIndicator())
           : ListView(

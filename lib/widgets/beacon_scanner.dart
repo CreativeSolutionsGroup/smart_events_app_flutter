@@ -117,9 +117,25 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
         identifier: 'Alec iPhone Beacon',
         proximityUUID: '715b00d1-6f35-510a-a219-f56661916498',
       ),
+      // Region(
+      //   identifier: 'Alec Pixel 3XL',
+      //   proximityUUID: 'ec266c73-95ce-4dbd-a46b-512a7da721d5',
+      // ),
       Region(
-        identifier: 'Alec Pixel 3XL',
-        proximityUUID: 'ec266c73-95ce-4dbd-a46b-512a7da721d5',
+        identifier: 'SmartEvents#1',
+        proximityUUID: '56ad5235-0a79-4931-b1dd-5d16c5334c20',
+      ),
+      Region(
+        identifier: 'SmartEvents#2',
+        proximityUUID: 'aa9e6759-47b8-4bd1-8bf2-76b289d46760',
+      ),
+      Region(
+        identifier: 'SmartEvents#3',
+        proximityUUID: '8940b363-00c4-433e-818b-cca6f0949645',
+      ),
+      Region(
+        identifier: 'SmartEvents#4',
+        proximityUUID: '83c51e77-8859-4cc6-a959-b237cd213264',
       ),
       Region(
         identifier: 'SmartEvents#1',

@@ -16,6 +16,7 @@ import 'package:smart_events_app_flutter/utils/user_account.dart';
 import 'package:smart_events_app_flutter/widgets/beacon_scanner.dart';
 
 import '../tabs/home.dart';
+import '../widgets/beacon_scanner_test.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key, required User user})
@@ -144,7 +145,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget buildTabPage(BuildContext context){
+Widget buildTabPage(BuildContext context){
     return FutureBuilder <UserAccount>(
         future: _userAccount,
         builder: (context, snapshot) {
