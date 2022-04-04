@@ -130,54 +130,77 @@ class _RewardsTabState extends State<RewardsTab> {
                             InkWell(
                               child: Column(
                                 children: [
-                                  Container(
-                                      margin: const EdgeInsets.all(5),
-                                      child: Row(
-                                        children: [
-                                          //Image
-                                          Visibility(
-                                            visible: reward!.image_url !=null && reward.image_url!.isNotEmpty,
-                                            child: reward.image_url !=null ?
-                                                    Image.network(
-                                                        reward.image_url!,
-                                                        height: 100,
-                                                        width: 100,
-                                                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                                          if (loadingProgress == null) {
-                                                            return child;
-                                                          }
-                                                          return const Center(
-                                                            child: CircularProgressIndicator(),
-                                                          );
-                                                        }
-                                                    )
-                                                : const Text("Error"),
-                                          ),
-                                          //Name and Description
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                  Stack(
+                                    children: [
+                                      Container(
+                                          margin: const EdgeInsets.all(5),
+                                          child: Row(
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 5.0,
-                                                  bottom: 5.0,
-                                                  left: 10.0
-                                                ),
-                                                child: Text(reward.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20))
+                                              //Image
+                                              Visibility(
+                                                visible: reward!.image_url !=null && reward.image_url!.isNotEmpty,
+                                                child: reward.image_url !=null ?
+                                                        Image.network(
+                                                            reward.image_url!,
+                                                            height: 100,
+                                                            width: 100,
+                                                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                                              if (loadingProgress == null) {
+                                                                return child;
+                                                              }
+                                                              return const Center(
+                                                                child: CircularProgressIndicator(),
+                                                              );
+                                                            }
+                                                        )
+                                                    : const Text("Error"),
                                               ),
-                                              Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      left: 10.0,
-                                                      bottom: 5.0
+                                              //Name and Description
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(
+                                                      top: 5.0,
+                                                      bottom: 5.0,
+                                                      left: 10.0
+                                                    ),
+                                                    child: Text(reward.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20))
                                                   ),
-                                                  child: Text(reward.description)
+                                                  Padding(
+                                                      padding: const EdgeInsets.only(
+                                                          left: 10.0,
+                                                          bottom: 5.0
+                                                      ),
+                                                      child: Text(reward.description)
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           )
-                                        ],
-                                      )
-                                  )
+                                      ),
+                                      //Count Indicator
+                                      Visibility(
+                                          visible: userReward.remaining_uses > 1,
+                                          child: Positioned(
+                                            top: 10,
+                                            right: 10,
+                                            child: Container(
+                                              width: 30,
+                                              height: 30,
+                                              decoration: const BoxDecoration(
+                                                color: AppConstants.COLOR_CEDARVILLE_YELLOW,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Center(
+                                                child: Text('${userReward.remaining_uses}', style: const TextStyle(fontWeight: FontWeight.bold))
+                                              )
+                                            ),
+                                          )
+                                      ),
+                                    ]
+                                  ),
                                 ],
                               ),
                               onTap: () {
