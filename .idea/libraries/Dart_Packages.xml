@@ -282,6 +282,20 @@
             </list>
           </value>
         </entry>
+        <entry key="qr">
+          <value>
+            <list>
+              <option value="C:/Flutter/.pub-cache/hosted/pub.dartlang.org/qr-2.1.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="qr_flutter">
+          <value>
+            <list>
+              <option value="C:/Flutter/.pub-cache/hosted/pub.dartlang.org/qr_flutter-4.0.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="quiver">
           <value>
             <list>
@@ -462,6 +476,8 @@
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/platform-3.1.0/lib" />
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-2.1.2/lib" />
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/process-4.2.4/lib" />
+      <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/qr-2.1.0/lib" />
+      <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/qr_flutter-4.0.0/lib" />
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/quiver-3.0.1+1/lib" />
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-2.0.13/lib" />
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences_android-2.0.11/lib" />

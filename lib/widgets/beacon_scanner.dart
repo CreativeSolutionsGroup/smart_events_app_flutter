@@ -3,17 +3,16 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:get/get.dart';
-import 'package:smart_events_app_flutter/screens/main_screen.dart';
+import 'package:smart_events_app_flutter/utils/app_constants.dart';
 
 import '../controller/requirement_state_controller.dart';
-import '../utils/authentication.dart';
 
 class BeaconScanner extends StatefulWidget {
+  const BeaconScanner({Key? key}) : super(key: key);
+
   @override
   _BeaconScannerState createState() => _BeaconScannerState();
 }
@@ -84,7 +83,7 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
     }
   }
 
-  @override
+  /*@override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     print('AppLifecycleState = $state');
     if (state == AppLifecycleState.resumed) {
@@ -97,7 +96,7 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
     } else if (state == AppLifecycleState.paused) {
       _streamBluetooth?.pause();
     }
-  }
+  }*/
 
   initScanBeacon() async {
     print("Init Scan");
@@ -122,6 +121,22 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
       //   identifier: 'Alec Pixel 3XL',
       //   proximityUUID: 'ec266c73-95ce-4dbd-a46b-512a7da721d5',
       // ),
+      Region(
+        identifier: 'SmartEvents#1',
+        proximityUUID: '56ad5235-0a79-4931-b1dd-5d16c5334c20',
+      ),
+      Region(
+        identifier: 'SmartEvents#2',
+        proximityUUID: 'aa9e6759-47b8-4bd1-8bf2-76b289d46760',
+      ),
+      Region(
+        identifier: 'SmartEvents#3',
+        proximityUUID: '8940b363-00c4-433e-818b-cca6f0949645',
+      ),
+      Region(
+        identifier: 'SmartEvents#4',
+        proximityUUID: '83c51e77-8859-4cc6-a959-b237cd213264',
+      ),
       Region(
         identifier: 'SmartEvents#1',
         proximityUUID: '56ad5235-0a79-4931-b1dd-5d16c5334c20',
@@ -166,9 +181,11 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
   pauseScanBeacon() async {
     _streamRanging?.pause();
     if (_beacons.isNotEmpty) {
-      setState(() {
-        _beacons.clear();
-      });
+      /*if(mounted) {
+        setState(() {
+          _beacons.clear();
+        });
+      }*/
     }
   }
 
@@ -189,15 +206,16 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
   @override
   void dispose() {
     print("Dispose");
-    _streamBluetooth?.cancel();
     _streamRanging?.cancel();
+    _streamBluetooth?.cancel();
+    controller.pauseScanning();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text("Check In Scanner"),
+      title: const Text("Check In Scanner"),
       children:[
         Column(
             mainAxisSize: MainAxisSize.max,
@@ -206,27 +224,29 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Obx(() {
-                    if (!controller.locationServiceEnabled)
+                    if (!controller.locationServiceEnabled) {
                       return IconButton(
                         tooltip: 'Not Determined',
-                        icon: Icon(Icons.portable_wifi_off),
+                        icon: const Icon(Icons.portable_wifi_off),
                         color: Colors.grey,
                         onPressed: () {},
                       );
+                    }
 
-                    if (!controller.authorizationStatusOk)
+                    if (!controller.authorizationStatusOk) {
                       return IconButton(
                         tooltip: 'Not Authorized',
-                        icon: Icon(Icons.portable_wifi_off),
+                        icon: const Icon(Icons.portable_wifi_off),
                         color: Colors.red,
                         onPressed: () async {
                           await flutterBeacon.requestAuthorization;
                         },
                       );
+                    }
 
                     return IconButton(
                       tooltip: 'Authorized',
-                      icon: Icon(Icons.wifi_tethering),
+                      icon: const Icon(Icons.wifi_tethering),
                       color: Colors.green,
                       onPressed: () async {
                         await flutterBeacon.requestAuthorization;
@@ -256,7 +276,7 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
                     if (state == BluetoothState.stateOn) {
                       return IconButton(
                         tooltip: 'Bluetooth ON',
-                        icon: Icon(Icons.bluetooth_connected),
+                        icon: const Icon(Icons.bluetooth_connected),
                         onPressed: () {},
                         color: Colors.green,
                       );
@@ -265,14 +285,14 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
                     if (state == BluetoothState.stateOff) {
                       return IconButton(
                         tooltip: 'Bluetooth OFF',
-                        icon: Icon(Icons.bluetooth),
+                        icon: const Icon(Icons.bluetooth),
                         onPressed: handleOpenBluetooth,
                         color: Colors.red,
                       );
                     }
 
                     return IconButton(
-                      icon: Icon(Icons.bluetooth_disabled),
+                      icon: const Icon(Icons.bluetooth_disabled),
                       tooltip: 'Bluetooth State Unknown',
                       onPressed: () {},
                       color: Colors.grey,
@@ -282,22 +302,22 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
               ),
               Visibility(
                   visible: !controller.locationServiceEnabled,
-                  child: Text("Location Permission Denied", style: const TextStyle(color: Colors.red))
+                  child: const Text("Location Permission Denied", style: TextStyle(color: Colors.red))
               ),
               Visibility(
                   visible: !controller.authorizationStatusOk,
-                  child: Text("Bluetooth Scanning Permission Disabled", style: const TextStyle(color: Colors.red))
+                  child: const Text("Bluetooth Scanning Permission Disabled", style: TextStyle(color: Colors.red))
               ),
               Visibility(
                   visible: !controller.bluetoothEnabled,
-                  child: Text("Bluetooth is Off", style: const TextStyle(color: Colors.red))
+                  child: const Text("Bluetooth is Off", style: TextStyle(color: Colors.red))
               ),
               Visibility(
                   visible: controller.bluetoothEnabled &&
                       controller.authorizationStatusOk &&
                       controller.locationServiceEnabled,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0, left: 16.0, right: 16.0),
+                  child: const Padding(
+                    padding: EdgeInsets.only(top: 10.0, left: 16.0, right: 16.0),
                     child: LinearProgressIndicator(
                       semanticsLabel: 'Linear progress indicator',
                     )
@@ -306,28 +326,39 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  //BeaconScannerTest()
                   SizedBox(
-                      height: 300,
+                      height: 200,
                       width: 300,
                       child: Visibility(
-                        visible: !_beacons.isEmpty,
-
+                        visible: _beacons.isNotEmpty,
                         child: ListView.builder(
-                          // Let the ListView know how many items it needs to build.
                           itemCount: _beacons.length,
-                          // Provide a builder function. This is where the magic happens.
-                          // Convert each item into a widget based on the type of item it is.
                           itemBuilder: (context, index) {
                             final Beacon item = _beacons[index];
 
                             return ListTile(
-                              title: Text('${item.proximityUUID}'),
+                              title: Text(item.proximityUUID),
                               subtitle: Text('${item.accuracy}m'),
                             );
                           },
                         ),
                       ),
                     )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    child: const Text('Check In', style: TextStyle(fontSize: 20.0),),
+                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all(_beacons.isEmpty ? Colors.grey : AppConstants.COLOR_CEDARVILLE_YELLOW)),
+                    onPressed: () {
+                      if(_beacons.isNotEmpty){
+
+                      }
+                    },
+                  ),
                 ],
               )
             ]
@@ -345,14 +376,14 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Location Services Off'),
-            content: Text(
+            title: const Text('Location Services Off'),
+            content: const Text(
               'Please enable Location Services on Settings > Privacy > Location Services.',
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -373,12 +404,12 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Bluetooth is Off'),
-            content: Text('Please enable Bluetooth on Settings > Bluetooth.'),
+            title: const Text('Bluetooth is Off'),
+            content: const Text('Please enable Bluetooth on Settings > Bluetooth.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );

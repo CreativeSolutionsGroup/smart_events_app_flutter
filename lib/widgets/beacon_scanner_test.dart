@@ -16,11 +16,14 @@ class _BeaconScannerTestState extends State<BeaconScannerTest> {
   final _regionBeacons = <Region, List<Beacon>>{};
   final _beacons = <Beacon>[];
   final controller = Get.find<RequirementStateController>();
+  StreamSubscription<BluetoothState>? _streamBluetooth;
 
   @override
   void initState() {
     super.initState();
 
+    listeningState();
+    
     controller.startStream.listen((flag) {
       if (flag == true) {
         initScanBeacon();
@@ -36,6 +39,7 @@ class _BeaconScannerTestState extends State<BeaconScannerTest> {
 
   initScanBeacon() async {
     await flutterBeacon.initializeScanning;
+
     if (!controller.authorizationStatusOk ||
         !controller.locationServiceEnabled ||
         !controller.bluetoothEnabled) {
@@ -50,10 +54,6 @@ class _BeaconScannerTestState extends State<BeaconScannerTest> {
         identifier: 'Alec iPhone Beacon',
         proximityUUID: '715b00d1-6f35-510a-a219-f56661916498',
       ),
-      // Region(
-      //   identifier: 'Alec Pixel 3XL',
-      //   proximityUUID: 'ec266c73-95ce-4dbd-a46b-512a7da721d5',
-      // ),
       Region(
         identifier: 'SmartEvents#1',
         proximityUUID: '56ad5235-0a79-4931-b1dd-5d16c5334c20',
@@ -95,6 +95,42 @@ class _BeaconScannerTestState extends State<BeaconScannerTest> {
         });
   }
 
+  listeningState() async {
+    print('Listening to bluetooth state');
+    _streamBluetooth = flutterBeacon
+        .bluetoothStateChanged()
+        .listen((BluetoothState state) async {
+      controller.updateBluetoothState(state);
+      await checkAllRequirements();
+    });
+  }
+
+  checkAllRequirements() async {
+    final bluetoothState = await flutterBeacon.bluetoothState;
+    controller.updateBluetoothState(bluetoothState);
+    print('BLUETOOTH $bluetoothState');
+
+    final authorizationStatus = await flutterBeacon.authorizationStatus;
+    controller.updateAuthorizationStatus(authorizationStatus);
+    print('AUTHORIZATION $authorizationStatus');
+
+    final locationServiceEnabled =
+    await flutterBeacon.checkLocationServicesIfEnabled;
+    controller.updateLocationService(locationServiceEnabled);
+    print('LOCATION SERVICE $locationServiceEnabled');
+
+    if (controller.bluetoothEnabled &&
+        controller.authorizationStatusOk &&
+        controller.locationServiceEnabled) {
+      print('STATE READY');
+      print('SCANNING');
+      controller.startScanning();
+    } else {
+      print('STATE NOT READY');
+      controller.pauseScanning();
+    }
+  }
+  
   pauseScanBeacon() async {
     _streamRanging?.pause();
     if (_beacons.isNotEmpty) {
@@ -121,13 +157,15 @@ class _BeaconScannerTestState extends State<BeaconScannerTest> {
   @override
   void dispose() {
     _streamRanging?.cancel();
+   _streamBluetooth?.cancel();
+    controller.pauseScanning();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _beacons.isEmpty
+return Container(
+      child: _beacons.isEmpty
           ? Center(child: CircularProgressIndicator())
           : ListView(
         children: ListTile.divideTiles(

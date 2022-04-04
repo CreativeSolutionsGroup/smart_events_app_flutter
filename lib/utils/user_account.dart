@@ -78,7 +78,6 @@ class UserAccount {
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data['data']);
       return UserAccount.fromJson(data['data']);
     } else {
       throw Exception('[User] Unexpected error occured!');
