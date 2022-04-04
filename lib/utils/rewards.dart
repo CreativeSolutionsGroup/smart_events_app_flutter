@@ -35,7 +35,6 @@ class Rewards {
   static RewardTier? getNextTier(RewardTier tier, List<RewardTier> tiers){
     List<RewardTier> reverse = tiers.reversed.toList();
     int index = reverse.indexOf(tier);
-    print(index);
     if(index > -1 && index < tiers.length - 1){
       return reverse.elementAt(index + 1);
     }
@@ -84,6 +83,7 @@ class RewardTier {
   final String description;
   final String color;
   final int min_points;
+  final List<String> rewards;
   //TODO: Store Rewards
 
   RewardTier({
@@ -92,15 +92,18 @@ class RewardTier {
     required this.description,
     required this.color,
     required this.min_points,
+    required this.rewards
   });
 
   factory RewardTier.fromJson(Map<String, dynamic> json) {
+    final List<dynamic> rewards = json['rewards'];
     return RewardTier(
         id: json["_id"],
         name: json['name'],
         description: json['description'],
         color: json['color'],
-        min_points: json['min_points']
+        min_points: json['min_points'],
+        rewards: rewards.cast<String>()
     );
   }
 }

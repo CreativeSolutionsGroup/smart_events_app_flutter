@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_events_app_flutter/utils/rewards.dart';
+import 'package:smart_events_app_flutter/widgets/reward_tier_info.dart';
 
 import '../utils/app_constants.dart';
 import '../utils/user_account.dart';
@@ -85,7 +86,12 @@ class _RewardsBasicViewState extends State<RewardsBasicView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           //TODO Convert colors
-                          Text(currentTier.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20))
+                           GestureDetector(
+                            onTap: () {
+                              _displayTierDialog(context, tiers);
+                            },
+                            child: Text(currentTier.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20))
+                          )
                         ]
                     ),
                     Padding(
@@ -135,6 +141,15 @@ class _RewardsBasicViewState extends State<RewardsBasicView> {
           // By default show a loading spinner.
           return const CircularProgressIndicator();
         }
+    );
+  }
+
+  _displayTierDialog(BuildContext context, List<RewardTier> data) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return RewardTierDialog(data: data);
+      },
     );
   }
 }
