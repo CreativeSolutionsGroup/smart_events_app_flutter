@@ -5,8 +5,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_events_app_flutter/screens/create_account_screen.dart';
 
 import '../screens/main_screen.dart';
+import './user_account.dart';
 
 class Authentication {
   static Future<FirebaseApp> initializeFirebase({
@@ -17,13 +19,31 @@ class Authentication {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => MainScreen(
-            user: user,
+      String? userID = await UserAccount.getUserID(user);
+
+      print("UserID");
+      print(userID);
+
+      //Test if userID is null or empty
+      if(userID == null){
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => CreateAccountScreen(
+              user: user,
+            ),
           ),
-        ),
-      );
+        );
+      }
+      else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) =>
+                MainScreen(
+                  user: user,
+                ),
+          ),
+        );
+      }
     }
 
     return firebaseApp;
