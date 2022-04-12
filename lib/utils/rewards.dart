@@ -84,7 +84,6 @@ class RewardTier {
   final String color;
   final int min_points;
   final List<String> rewards;
-  //TODO: Store Rewards
 
   RewardTier({
     required this.id,
