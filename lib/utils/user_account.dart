@@ -35,25 +35,32 @@ class UserAccount {
     );
   }
 
-  static Future <String> getUserID(User user) async {
+  static Future <String?> getUserID(User user) async {
     final prefs = await SharedPreferences.getInstance();
 
     String? storedUserID = prefs.getString("USER_ID");
     if(storedUserID == null){
       storedUserID = await fetchUserId(user.email!);
-      prefs.setString("USER_ID", storedUserID);
+      if(storedUserID != null) {
+        prefs.setString("USER_ID", storedUserID);
+      }
     }
     return storedUserID;
   }
 
-  static Future <String> fetchUserId(String userEmail) async {
+  static Future <String?> fetchUserId(String userEmail) async {
     final response =
     await http.post(Uri.parse(AppConstants.API_URL + '/find_user/'), body: {"email": userEmail});
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return data["data"]["user_id"];
+      if(data["status"] == "success") {
+        return data["data"]["user_id"];
+      }
+      else {
+        return null;
+      }
     } else {
-      throw Exception('[User] Unexpected error occured!');
+      return null;
     }
   }
 
@@ -81,6 +88,66 @@ class UserAccount {
       return UserAccount.fromJson(data['data']);
     } else {
       throw Exception('[User] Unexpected error occured!');
+    }
+  }
+
+  static Future <UserAccount?> addUserAccount(User user, String email, String name, String studentId, String phone) async {
+    final auth = await user.getIdToken();
+    final response =
+    await http.post(
+        Uri.parse(AppConstants.API_URL + '/user/'),
+        headers: {
+          "Authorization": 'Bearer '+ auth,
+          "Content-Type": "application/x-www-form-urlencoded",
+          "isFirebaseAuth": "true"
+        },
+        body: {
+          "email": email,
+          "name": name,
+          "student_id": studentId,
+          "phone_number": phone
+        }
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if(data['status'] == "success") {
+        return UserAccount.fromJson(data['data']);
+      }
+      else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  static Future <UserAccount?> updateUserAccount(User user, UserAccount account, String name, String studentId, String phone) async {
+    final auth = await user.getIdToken();
+    final response =
+    await http.put(
+        Uri.parse(AppConstants.API_URL + '/user/' + account.id),
+        headers: {
+          "Authorization": 'Bearer '+ auth,
+          "Content-Type": "application/x-www-form-urlencoded",
+          "isFirebaseAuth": "true"
+        },
+        body: {
+          "name": name,
+          "student_id": studentId,
+          "phone_number": phone
+        }
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if(data['status'] == "success") {
+        return UserAccount.fromJson(data['data']);
+      }
+      else {
+        return null;
+      }
+    } else {
+      return null;
     }
   }
 }

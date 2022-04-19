@@ -17,6 +17,7 @@ import 'package:smart_events_app_flutter/widgets/beacon_scanner.dart';
 
 import '../tabs/home.dart';
 import '../widgets/beacon_scanner_test.dart';
+import 'create_account_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key, required User user})
@@ -38,9 +39,19 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
+class DataRequiredForBuild {
+  String? userID;
+  UserAccount? userAccount;
+
+  DataRequiredForBuild({
+    required this.userID,
+    required this.userAccount,
+  });
+}
+
 class _MainScreenState extends State<MainScreen> {
   late User _user;
-  late Future<UserAccount> _userAccount;
+  late Future<DataRequiredForBuild> _data;
   bool _isSigningOut = false;
 
   int _selectedIndex = 0; //Selected Tab
@@ -67,14 +78,27 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     _user = widget._user;
-    _userAccount = _fetchUserAccount(_user);
+    _data = setupUser(_user);
     super.initState();
   }
 
-  Future<UserAccount> _fetchUserAccount(User user) async {
-    String userID = await UserAccount.getUserID(user);
-    UserAccount userAccount = await UserAccount.fetchUserAccount(user, userID);
-    return userAccount;
+  Future<DataRequiredForBuild> setupUser(User user) async {
+    String? userID = await UserAccount.getUserID(user);
+    UserAccount? _userAccount;
+    if(userID == null){
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => CreateAccountScreen(
+            user: user,
+          ),
+        ),
+      );
+      _userAccount = null;
+    }
+    else {
+      _userAccount = await UserAccount.fetchUserAccount(user, userID);
+    }
+    return DataRequiredForBuild(userID: userID, userAccount: _userAccount);
   }
 
   static List<Widget> _pages = <Widget>[
@@ -146,16 +170,23 @@ class _MainScreenState extends State<MainScreen> {
   }
 
 Widget buildTabPage(BuildContext context){
-    return FutureBuilder <UserAccount>(
-        future: _userAccount,
+    return FutureBuilder <DataRequiredForBuild>(
+        future: _data,
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
-            UserAccount userAccount = snapshot.data!;
+            DataRequiredForBuild data = snapshot.data!;
+
+            UserAccount? account = data.userAccount;
+
+            if(account == null){
+              return const Text("Missing User!");
+            }
+
             if(_selectedIndex == 0){
-              return HomeTab(user: _user, userAccount: userAccount);
+              return HomeTab(user: _user, userAccount: account);
             }
             else if(_selectedIndex == 4){
-              return RewardsTab(user: _user, userAccount: userAccount);
+              return RewardsTab(user: _user, userAccount: account);
             }
             else {
               return _pages.elementAt(_selectedIndex);
@@ -165,7 +196,7 @@ Widget buildTabPage(BuildContext context){
             return Text("${snapshot.error}");
           }
           // By default show a loading spinner.
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
     );
   }
