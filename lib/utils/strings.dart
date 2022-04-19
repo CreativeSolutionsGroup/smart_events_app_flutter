@@ -1,6 +1,9 @@
 
 class Strings {
 
+  static final RegExp REGEX_STUDENT_ID = RegExp(r'^[0-9]{7}$');
+  static final RegExp REGEX_PHONE_NUMBER = RegExp(r'^[0-9]{3}-[0-9]{3}-[0-9]{4}$');
+
   static String displayDate(DateTime date){
     if(date == null)return "ERROR";
 

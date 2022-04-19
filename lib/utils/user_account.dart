@@ -120,4 +120,34 @@ class UserAccount {
       return null;
     }
   }
+
+  static Future <UserAccount?> updateUserAccount(User user, UserAccount account, String name, String studentId, String phone) async {
+    final auth = await user.getIdToken();
+    final response =
+    await http.put(
+        Uri.parse(AppConstants.API_URL + '/user/' + account.id),
+        headers: {
+          "Authorization": 'Bearer '+ auth,
+          "Content-Type": "application/x-www-form-urlencoded",
+          "isFirebaseAuth": "true"
+        },
+        body: {
+          "name": name,
+          "student_id": studentId,
+          "phone_number": phone
+        }
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if(data['status'] == "success") {
+        return UserAccount.fromJson(data['data']);
+      }
+      else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
 }

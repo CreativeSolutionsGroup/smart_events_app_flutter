@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_events_app_flutter/utils/app_constants.dart';
 import 'package:smart_events_app_flutter/utils/user_account.dart';
 
+import '../utils/strings.dart';
 import 'main_screen.dart';
 
 
@@ -55,7 +56,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Flexible(
                 flex: 1,
                 child: Image.asset(
@@ -63,6 +64,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   height: 130,
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text("Sign Up", style: TextStyle(fontSize: 50, color: AppConstants.COLOR_CEDARVILLE_BLUE, fontWeight: FontWeight.bold))
+                ],
+              ),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
@@ -110,6 +118,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your Student ID';
                           }
+                          if(!Strings.REGEX_STUDENT_ID.hasMatch(value)){
+                            return 'Please enter a 7 digit Student ID';
+                          }
                           return null;
                         },
                         controller: studentIDController,
@@ -129,6 +140,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your phone number';
+                          }
+                          if(!Strings.REGEX_PHONE_NUMBER.hasMatch(value)){
+                            return 'Enter a valid phone number (ex. 123-456-7890)';
                           }
                           return null;
                         },
