@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'app_constants.dart';
@@ -13,6 +15,7 @@ class CheckIn {
   final String image_url;
   final String start_time;
   final String end_time;
+  final int reward_points;
   final List<String> beacon_ids;
 
   CheckIn({
@@ -24,6 +27,7 @@ class CheckIn {
     required this.image_url,
     required this.start_time,
     required this.end_time,
+    required this.reward_points,
     required this.beacon_ids,
   });
 
@@ -38,6 +42,7 @@ class CheckIn {
         image_url: json['image_url'],
         start_time: json['start_time'],
         end_time: json['end_time'],
+        reward_points: json['reward_points'],
         beacon_ids: beacons.cast<String>()
     );
   }
@@ -54,6 +59,96 @@ class CheckIn {
     } else {
       throw Exception('[CheckIn] Unexpected error occured!');
     }
+  }
+
+  static Future <CheckIn> fetchCheckIn(String checkInID) async {
+    final response =
+    await http.get(Uri.parse(AppConstants.API_URL + '/checkin/' + checkInID));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return CheckIn.fromJson(data["data"]);
+    } else {
+      throw Exception('[CheckIn] Unexpected error occured!');
+    }
+  }
+
+  static Future <bool> postCheckInToCheckIn(BuildContext context, String checkInID, String userID) async {
+    final response =
+    await http.post(
+        Uri.parse(AppConstants.API_URL + '/user_checkin'),
+        body: {
+          "check_in_id": checkInID,
+          "user_id": userID
+        }
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if(data["status"] == "success"){
+        showCheckIn(context, checkInID);
+        return true;
+      }
+      if(data["status"] == "duplicate"){
+        showCheckInWarning(context, 'You have already checked in');
+      }
+      if(data['status'] == "error") {
+        showCheckInWarning(context, 'Error Checking In');
+      }
+      return false;
+    } else {
+      throw Exception('[CheckIn] Unexpected error occured!');
+    }
+  }
+
+  static showCheckInWarning(BuildContext context, String message){
+    showDialog(
+        context: context,
+        builder: (context) {
+      return AlertDialog(
+        title: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+    );
+  }
+
+  static showCheckIn(BuildContext context, String checkInID) async{
+    CheckIn checkIn = await fetchCheckIn(checkInID);
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center(
+            child: Text(checkIn.name),
+          ),
+          content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Visibility(
+                    visible: checkIn.image_url.isNotEmpty,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Image.network(checkIn.image_url)
+                    )
+                  ),
+                  Text(checkIn.message),
+                  const SizedBox(height: 10),
+                  Text("+"+checkIn.reward_points.toString(), style: const TextStyle(fontWeight: FontWeight.bold, color: AppConstants.COLOR_CEDARVILLE_YELLOW, fontSize: 24))
+                ],
+              ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 

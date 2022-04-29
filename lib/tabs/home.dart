@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:smart_events_app_flutter/utils/app_constants.dart';
+import 'package:smart_events_app_flutter/utils/checkin.dart';
 import 'package:smart_events_app_flutter/utils/user_account.dart';
 import 'package:smart_events_app_flutter/widgets/beacon_scanner.dart';
 import 'package:smart_events_app_flutter/widgets/home_rewards.dart';
@@ -87,7 +88,7 @@ class _HomeTabState extends State<HomeTab> {
                             children: [
                               IconButton(
                                 tooltip: 'Notifications',
-                                icon: Icon(Icons.notifications_none),
+                                icon: const Icon(Icons.notifications_none),
                                 color: AppConstants.COLOR_CEDARVILLE_BLUE,
                                 onPressed: () {
                                   //_displayScanningDialog(context);
@@ -95,7 +96,7 @@ class _HomeTabState extends State<HomeTab> {
                               ),
                               IconButton(
                                 tooltip: 'Check In',
-                                icon: Icon(Icons.where_to_vote),
+                                icon: const Icon(Icons.where_to_vote),
                                 color: AppConstants.COLOR_CEDARVILLE_YELLOW,
                                 onPressed: () {
                                   _displayScanningDialog(context);

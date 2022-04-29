@@ -7,12 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:get/get.dart';
 import 'package:smart_events_app_flutter/utils/app_constants.dart';
+import 'package:smart_events_app_flutter/utils/user_account.dart';
 
 import '../controller/requirement_state_controller.dart';
 import '../utils/checkin.dart';
 
 class BeaconScanner extends StatefulWidget {
-  const BeaconScanner({Key? key}) : super(key: key);
+  const BeaconScanner({Key? key, required UserAccount userAccount}) : _userAccount =  userAccount, super(key: key);
+
+  final UserAccount _userAccount;
 
   @override
   _BeaconScannerState createState() => _BeaconScannerState();
@@ -39,10 +42,13 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
   late Map<String, BeaconSE> seBeacons;
   CheckIn? selectedCheckIn;
 
+  late UserAccount _userAccount;
+
   @override
   void initState() {
     WidgetsBinding.instance?.addObserver(this);
     _checkIns = _fetchActiveCheckins();
+    _userAccount = widget._userAccount;
 
     super.initState();
 
@@ -463,7 +469,9 @@ class _BeaconScannerState extends State<BeaconScanner> with WidgetsBindingObserv
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(!isCheckInValid() ? Colors.grey : AppConstants.COLOR_CEDARVILLE_YELLOW)),
                 onPressed: () {
                   if(isCheckInValid()){
-
+                    //CheckIn.postCheckInToCheckIn(context, "620da62757ab4ab70d47cb0e", "62584c469bb91f3920bf628a");
+                    //CheckIn.showCheckIn(context, "620da62757ab4ab70d47cb0e");
+                    CheckIn.postCheckInToCheckIn(context, selectedCheckIn!.id, _userAccount.id);
                   }
                 },
               ),

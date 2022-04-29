@@ -110,7 +110,7 @@
         <entry key="firebase_core_web">
           <value>
             <list>
-              <option value="C:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.6.1/lib" />
+              <option value="C:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.6.2/lib" />
             </list>
           </value>
         </entry>
@@ -454,7 +454,7 @@
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-3.3.9/lib" />
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-1.13.1/lib" />
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_platform_interface-4.2.5/lib" />
-      <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.6.1/lib" />
+      <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.6.2/lib" />
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/flutter_beacon-0.5.1/lib" />
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/flutter_lints-1.0.4/lib" />
       <root url="file://C:/Flutter/.pub-cache/hosted/pub.dartlang.org/get-4.6.1/lib" />
