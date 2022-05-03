@@ -131,7 +131,7 @@ class _HomeTabState extends State<HomeTab> {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return BeaconScanner();
+        return BeaconScanner(userAccount: _userAccount);
       },
     );
   }

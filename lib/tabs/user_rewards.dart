@@ -118,6 +118,7 @@ class _RewardsTabState extends State<RewardsTab> {
             Map<String, Reward> rewards = snapshot.data!.rewards;
 
             if(userRewards.isEmpty){
+              //TODO: Allow the user to refresh an empty list to load in new rewards
               return const Center(
                   child: Text("Empty", style: TextStyle(fontSize: 18))
               );

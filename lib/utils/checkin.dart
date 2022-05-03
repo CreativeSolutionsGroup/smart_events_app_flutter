@@ -132,6 +132,7 @@ class CheckIn {
                     visible: checkIn.image_url.isNotEmpty,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 10),
+                      //TODO: Give this a loading animation
                       child: Image.network(checkIn.image_url)
                     )
                   ),
@@ -142,7 +143,8 @@ class CheckIn {
               ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              //TODO: Refresh the user's points after they are awarded them so they display correctly
+              onPressed: () => Navigator.pop(context), //Maybe pop back to the main screen not the scan dialog
               child: const Text('OK'),
             ),
           ],
